@@ -1,0 +1,84 @@
+{
+  "manifest_version": 3,
+  "name": "Leetcomete",
+  "version": "1.0.0",
+  "description": "Local-first autocomplete for code editors on LeetCode, GeeksforGeeks, HackerRank, Codeforces, CodeChef, AtCoder, and Exercism.",
+  "minimum_chrome_version": "111",
+  "permissions": ["storage"],
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Leetcomete",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://leetcode.com/*",
+        "https://www.leetcode.com/*",
+        "https://leetcode.cn/*",
+        "https://www.leetcode.cn/*",
+        "https://geeksforgeeks.org/*",
+        "https://www.geeksforgeeks.org/*",
+        "https://practice.geeksforgeeks.org/*",
+        "https://hackerrank.com/*",
+        "https://www.hackerrank.com/*",
+        "https://codeforces.com/*",
+        "https://www.codeforces.com/*",
+        "https://m1.codeforces.com/*",
+        "https://m2.codeforces.com/*",
+        "https://codechef.com/*",
+        "https://www.codechef.com/*",
+        "https://atcoder.jp/*",
+        "https://exercism.org/*",
+        "https://www.exercism.org/*"
+      ],
+      "js": ["page-bridge.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://leetcode.com/*",
+        "https://www.leetcode.com/*",
+        "https://leetcode.cn/*",
+        "https://www.leetcode.cn/*",
+        "https://geeksforgeeks.org/*",
+        "https://www.geeksforgeeks.org/*",
+        "https://practice.geeksforgeeks.org/*",
+        "https://hackerrank.com/*",
+        "https://www.hackerrank.com/*",
+        "https://codeforces.com/*",
+        "https://www.codeforces.com/*",
+        "https://m1.codeforces.com/*",
+        "https://m2.codeforces.com/*",
+        "https://codechef.com/*",
+        "https://www.codechef.com/*",
+        "https://atcoder.jp/*",
+        "https://exercism.org/*",
+        "https://www.exercism.org/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "world": "ISOLATED"
+    }
+  ]
+}

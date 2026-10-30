@@ -6,6 +6,7 @@
  * be the first-level entry), which is what Chrome expects for an unpacked
  * folder and for a Web Store upload.
  */
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
   existsSync,
@@ -78,8 +79,15 @@ function main() {
   rmSync(zipPath, { force: true });
   rmSync(checksumPath, { force: true });
 
-  const archive = createZip(entries);
-  writeFileSync(zipPath, archive);
+  let archive;
+  try {
+    execFileSync("zip", ["-X", "-9", zipPath, "manifest.json"], { cwd: DIST, stdio: "ignore" });
+    execFileSync("zip", ["-r", "-X", "-9", zipPath, ".", "-x", ".*", "-x", "__MACOSX/*"], { cwd: DIST, stdio: "ignore" });
+    archive = readFileSync(zipPath);
+  } catch {
+    archive = createZip(entries);
+    writeFileSync(zipPath, archive);
+  }
   const checksum = createHash("sha256").update(archive).digest("hex");
   writeFileSync(checksumPath, `${checksum}  ${baseName}.zip\n`);
 

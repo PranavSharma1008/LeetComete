@@ -59,7 +59,30 @@ function validateName(name) {
  * @returns {Buffer} Complete ZIP archive.
  */
 export function createZip(entries, { date = new Date() } = {}) {
-  const sorted = [...entries].sort((left, right) => left.name.localeCompare(right.name));
+  // Collect directories implicitly referenced by file paths
+  const dirNames = new Set();
+  for (const entry of entries) {
+    const parts = entry.name.split("/");
+    for (let i = 1; i < parts.length; i++) {
+      dirNames.add(parts.slice(0, i).join("/") + "/");
+    }
+  }
+
+  const allEntries = [];
+  for (const dirName of dirNames) {
+    allEntries.push({ name: dirName, data: Buffer.alloc(0), isDirectory: true });
+  }
+  for (const entry of entries) {
+    allEntries.push({ ...entry, isDirectory: false });
+  }
+
+  // Ensure manifest.json is strictly the first entry in the archive root
+  const sorted = allEntries.sort((left, right) => {
+    if (left.name === "manifest.json") return -1;
+    if (right.name === "manifest.json") return 1;
+    return left.name.localeCompare(right.name);
+  });
+
   const seen = new Set();
   for (const entry of sorted) {
     validateName(entry.name);
@@ -75,11 +98,15 @@ export function createZip(entries, { date = new Date() } = {}) {
   for (const entry of sorted) {
     const name = Buffer.from(entry.name, "utf8");
     const raw = entry.data;
-    const deflated = deflateRawSync(raw, { level: 9 });
-    const useDeflate = deflated.length < raw.length;
+    const isDir = Boolean(entry.isDirectory);
+    const deflated = isDir ? raw : deflateRawSync(raw, { level: 9 });
+    const useDeflate = !isDir && deflated.length < raw.length;
     const payload = useDeflate ? deflated : raw;
     const method = useDeflate ? 8 : 0;
-    const checksum = crc32(raw);
+    const checksum = isDir ? 0 : crc32(raw);
+    const externalAttributes = isDir
+      ? ((0o040755 << 16) | 0x10) >>> 0
+      : (0o100644 << 16) >>> 0;
 
     const local = Buffer.alloc(30);
     local.writeUInt32LE(LOCAL_HEADER, 0);
@@ -97,8 +124,8 @@ export function createZip(entries, { date = new Date() } = {}) {
 
     const central = Buffer.alloc(46);
     central.writeUInt32LE(CENTRAL_HEADER, 0);
-    central.writeUInt16LE(20, 4); // version made by
-    central.writeUInt16LE(20, 6); // version needed
+    central.writeUInt16LE(0x0314, 4); // version made by: Unix (0x03), PKZIP 2.0 (0x14)
+    central.writeUInt16LE(20, 6); // version needed: 2.0
     central.writeUInt16LE(UTF8_FLAG, 8);
     central.writeUInt16LE(method, 10);
     central.writeUInt16LE(dosTime, 12);
@@ -111,7 +138,7 @@ export function createZip(entries, { date = new Date() } = {}) {
     central.writeUInt16LE(0, 32); // comment
     central.writeUInt16LE(0, 34); // disk start
     central.writeUInt16LE(0, 36); // internal attributes
-    central.writeUInt32LE(0, 38); // external attributes
+    central.writeUInt32LE(externalAttributes, 38); // external attributes (Unix permissions + directory bit)
     central.writeUInt32LE(offset, 42);
     centralParts.push(central, name);
 

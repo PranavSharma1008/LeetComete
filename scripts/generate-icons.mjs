@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { mkdirSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { deflateSync } from "node:zlib";
@@ -168,8 +168,14 @@ function drawIcon(size) {
 
 export function generateIcons(outDir = join(ROOT, "dist", "icons")) {
   mkdirSync(outDir, { recursive: true });
+  const srcIconsDir = join(ROOT, "src", "icons");
   for (const size of SIZES) {
-    writeFileSync(join(outDir, `icon${size}.png`), drawIcon(size));
+    const srcIcon = join(srcIconsDir, `icon${size}.png`);
+    if (existsSync(srcIcon)) {
+      copyFileSync(srcIcon, join(outDir, `icon${size}.png`));
+    } else {
+      writeFileSync(join(outDir, `icon${size}.png`), drawIcon(size));
+    }
   }
   return outDir;
 }

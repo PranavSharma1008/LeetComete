@@ -1,6 +1,6 @@
 {
   "name": "leetcomete",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Local-first, intelligent autocomplete for browser-based code editors.",
   "type": "module",

@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Leetcomete",
-  "version": "1.0.0",
-  "description": "Local-first autocomplete for code editors on LeetCode, GeeksforGeeks, HackerRank, Codeforces, CodeChef, AtCoder, and Exercism.",
+  "version": "1.0.1",
+  "description": "Local-first, context-aware code autocomplete for competitive programming and online coding practice platforms.",
   "minimum_chrome_version": "111",
   "permissions": ["storage"],
   "background": {

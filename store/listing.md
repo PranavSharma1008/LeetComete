@@ -9,15 +9,15 @@ that has not been performed; see `docs/VERIFICATION.md` for the current evidence
 | Field | Value |
 | --- | --- |
 | Name | Leetcomete |
-| Summary (max 132 chars) | Local-first autocomplete for code editors on LeetCode, GeeksforGeeks, HackerRank, Codeforces, CodeChef, AtCoder, and Exercism. |
+| Summary (max 132 chars) | Local-first, context-aware code autocomplete for competitive programming and online coding practice platforms. |
 | Category | Developer Tools |
 | Language | English |
-| Version | 1.0.0 (use the version in `package.json` / `dist/manifest.json`) |
+| Version | 1.0.1 (use the version in `package.json` / `dist/manifest.json`) |
 | Privacy policy URL | `https://YOUR_DOMAIN/privacy.html` |
 | Support URL | `https://YOUR_DOMAIN/` or a GitHub Issues page |
 | Homepage URL | `https://YOUR_DOMAIN/` (optional) |
 
-The manifest description is the same 126-character summary. The store allows a
+The manifest description is the same 109-character summary. The store allows a
 longer detailed description below.
 
 ## Detailed description
@@ -39,15 +39,17 @@ FEATURES
 • Light, dark, and auto themes.
 • Settings stored locally in chrome.storage.local; Chrome Sync is an explicit opt-in mirror for preferences only.
 
-SUPPORTED SITES
+COMPATIBILITY & WORKFLOW
 
-LeetCode (.com and .cn), GeeksforGeeks, HackerRank, Codeforces, CodeChef, AtCoder, and Exercism. Site layouts change; the popup reports the detected platform, editor, and language so selector failures are visible.
+Leetcomete is designed for online coding platforms and competitive programming judges that use browser-based code editors such as Monaco, CodeMirror 5, or standard text areas.
 
-CodeMirror 6 is detected and reported as unsupported rather than faked. Exercism commonly uses CodeMirror 6.
+The extension integrates directly with the active editor to provide fast, relevant completions while preserving native keyboard shortcuts and undo history. Site layouts change over time; the toolbar popup always displays the detected editor, environment, and programming language so integration status is always transparent.
+
+CodeMirror 6 environments are actively detected and indicated as unsupported rather than degraded.
 
 PRIVACY
 
-The extension requests only the storage permission. Site access is limited to the seven supported platforms through content-script match patterns. Editor text is processed in memory and is not stored or transmitted. No analytics, ads, telemetry, remote code, or data sharing. See the privacy policy for details.
+The extension requests only the storage permission. Site access is scoped strictly to supported coding practice platforms through manifest content-script match patterns. Editor text is processed in memory and is not stored or transmitted. No analytics, ads, telemetry, remote code, or data sharing. See the privacy policy for details.
 
 REQUIREMENTS
 

@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Leetcomete settings</title>
+    <link rel="stylesheet" href="./options.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div class="brand-copy">
+            <h1 class="brand-title">Leetcomete settings</h1>
+            <p class="brand-subtitle">Local-first intelligent autocomplete</p>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <span id="saveState" class="pill save-state" data-state="loaded" aria-live="polite">Loaded</span>
+          <span id="version" class="pill">v1.0.0</span>
+        </div>
+      </header>
+
+      <div class="layout">
+        <nav class="toc" aria-label="Settings sections">
+          <a href="#general">General</a>
+          <a href="#behavior">Behavior</a>
+          <a href="#sources">Suggestions</a>
+          <a href="#platforms">Platforms</a>
+          <a href="#languages">Languages</a>
+          <a href="#privacy">Privacy</a>
+        </nav>
+
+        <main class="content">
+          <section id="general" class="card section" aria-labelledby="generalTitle">
+            <div class="section-head">
+              <div>
+                <h2 id="generalTitle" class="section-title">General</h2>
+                <p class="section-description">Master switches for the extension and appearance.</p>
+              </div>
+              <span class="section-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M4 7h16M4 17h16M8 4v6M16 14v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+              </span>
+            </div>
+
+            <label class="row">
+              <span class="row-copy">
+                <span class="row-title">Enable Leetcomete</span>
+                <span class="row-description">Pause completion on every supported site without uninstalling.</span>
+              </span>
+              <span class="switch">
+                <span class="sr-only">Enable Leetcomete</span>
+                <input type="checkbox" data-setting="enabled" />
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+
+            <label class="row">
+              <span class="row-copy">
+                <span class="row-title">Sync settings across devices</span>
+                <span class="row-description">Mirror preferences to Chrome Sync. Code is never synced or stored.</span>
+              </span>
+              <span class="switch">
+                <span class="sr-only">Sync settings across devices</span>
+                <input type="checkbox" data-setting="syncEnabled" />
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+
+            <div class="field">
+              <div class="field-head">
+                <span class="field-label">Theme</span>
+              </div>
+              <div class="segmented" role="radiogroup" aria-label="Theme">
+                <label>
+                  <input type="radio" name="theme" value="auto" />
+                  <span>Auto</span>
+                </label>
+                <label>
+                  <input type="radio" name="theme" value="light" />
+                  <span>Light</span>
+                </label>
+                <label>
+                  <input type="radio" name="theme" value="dark" />
+                  <span>Dark</span>
+                </label>
+              </div>
+              <p class="field-description">Auto follows your operating system appearance.</p>
+            </div>
+          </section>
+
+          <section id="behavior" class="card section" aria-labelledby="behaviorTitle">
+            <div class="section-head">
+              <div>
+                <h2 id="behaviorTitle" class="section-title">Completion behavior</h2>
+                <p class="section-description">Tune when the popup opens and how suggestions are accepted.</p>
+              </div>
+              <span class="section-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="m5 7 4 5-4 5M12 17h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
+
+            <div class="field">
+              <div class="field-head">
+                <label class="field-label" for="minPrefixLength">Minimum prefix length</label>
+                <output id="minPrefixLengthValue" class="field-value" for="minPrefixLength">1</output>
+              </div>
+              <input id="minPrefixLength" class="range" type="range" min="0" max="3" step="1" data-setting="minPrefixLength" />
+              <div class="range-scale"><span>0</span><span>3</span></div>
+              <p class="field-description">Characters required before the popup opens automatically. Explicit triggers ignore this.</p>
+            </div>
+
+            <div class="field">
+              <div class="field-head">
+                <label class="field-label" for="maxSuggestions">Maximum suggestions</label>
+                <output id="maxSuggestionsValue" class="field-value" for="maxSuggestions">40</output>
+              </div>
+              <input id="maxSuggestions" class="range" type="range" min="5" max="100" step="5" data-setting="maxSuggestions" />
+              <div class="range-scale"><span>5</span><span>100</span></div>
+            </div>
+
+            <div class="field">
+              <div class="field-head">
+                <label class="field-label" for="debounceMs">Typing debounce</label>
+                <output id="debounceMsValue" class="field-value" for="debounceMs">70 ms</output>
+              </div>
+              <input id="debounceMs" class="range" type="range" min="0" max="400" step="10" data-setting="debounceMs" />
+              <div class="range-scale"><span>Instant</span><span>400 ms</span></div>
+              <p class="field-description">Lower is snappier; higher does less work while typing quickly.</p>
+            </div>
+
+            <label class="row">
+              <span class="row-copy">
+                <span class="row-title">Accept with Tab</span>
+                <span class="row-description">Tab accepts the selected item while the popup is open.</span>
+              </span>
+              <span class="switch">
+                <span class="sr-only">Accept with Tab</span>
+                <input type="checkbox" data-setting="acceptOnTab" />
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+
+            <label class="row">
+              <span class="row-copy">
+                <span class="row-title">Accept with Enter</span>
+                <span class="row-description">Enter accepts only when the popup is visible; otherwise it inserts a newline.</span>
+              </span>
+              <span class="switch">
+                <span class="sr-only">Accept with Enter</span>
+                <input type="checkbox" data-setting="acceptOnEnter" />
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+
+            <label class="row">
+              <span class="row-copy">
+                <span class="row-title">Fuzzy matching</span>
+                <span class="row-description">Match <code class="mono">cmpl</code> to <code class="mono">complement</code> in addition to prefixes.</span>
+              </span>
+              <span class="switch">
+                <span class="sr-only">Fuzzy matching</span>
+                <input type="checkbox" data-setting="fuzzyMatching" />
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+          </section>
+
+          <section id="sources" class="card section" aria-labelledby="sourcesTitle">
+            <div class="section-head">
+              <div>
+                <h2 id="sourcesTitle" class="section-title">Suggestion sources</h2>
+                <p class="section-description">Your declarations and identifiers are always indexed locally.</p>
+              </div>
+              <span class="section-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M5 5h14v14H5zM8 9h8M8 13h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
+
+            <label class="row">
+              <span class="row-copy">
+                <span class="row-title">Keywords and modifiers</span>
+                <span class="row-description">Language keywords such as <code class="mono">return</code>, <code class="mono">public</code>, and <code class="mono">async</code>.</span>
+              </span>
+              <span class="switch">
+                <span class="sr-only">Show keywords and modifiers</span>
+                <input type="checkbox" data-setting="showKeywords" />
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+
+            <label class="row">
+              <span class="row-copy">
+                <span class="row-title">Built-in types and globals</span>
+                <span class="row-description">Common types and global functions for the detected language.</span>
+              </span>
+              <span class="switch">
+                <span class="sr-only">Show built-in types and globals</span>
+                <input type="checkbox" data-setting="showBuiltins" />
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+
+            <label class="row">
+              <span class="row-copy">
+                <span class="row-title">Snippets</span>
+                <span class="row-description">Small templates such as loops and class declarations, with the caret placed inside.</span>
+              </span>
+              <span class="switch">
+                <span class="sr-only">Show snippets</span>
+                <input type="checkbox" data-setting="showSnippets" />
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+
+            <label class="row">
+              <span class="row-copy">
+                <span class="row-title">Member suggestions</span>
+                <span class="row-description">Members after <code class="mono">.</code>, <code class="mono">-&gt;</code>, or <code class="mono">::</code>, using local type inference.</span>
+              </span>
+              <span class="switch">
+                <span class="sr-only">Show member suggestions</span>
+                <input type="checkbox" data-setting="showMemberSuggestions" />
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+          </section>
+
+          <section id="platforms" class="card section" aria-labelledby="platformsTitle">
+            <div class="section-head">
+              <div>
+                <h2 id="platformsTitle" class="section-title">Platforms</h2>
+                <p class="section-description">Each integration is best-effort and can be disabled independently.</p>
+              </div>
+            </div>
+            <div id="platformGrid" class="check-grid"></div>
+          </section>
+
+          <section id="languages" class="card section" aria-labelledby="languagesTitle">
+            <div class="section-head">
+              <div>
+                <h2 id="languagesTitle" class="section-title">Languages</h2>
+                <p class="section-description">Analysis is local. Disabled languages fall back to identifier-only completion.</p>
+              </div>
+            </div>
+            <div id="languageGrid" class="check-grid"></div>
+          </section>
+
+          <section id="privacy" class="card section" aria-labelledby="privacyTitle">
+            <div class="section-head">
+              <div>
+                <h2 id="privacyTitle" class="section-title">Privacy and diagnostics</h2>
+                <p class="section-description">The extension has no network code and never transmits source code.</p>
+              </div>
+              <span class="section-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3 5 6v5c0 4.5 2.9 8.2 7 10 4.1-1.8 7-5.5 7-10V6l-7-3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                  <path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </div>
+
+            <ul class="privacy-list">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <span>Lexing, scope analysis, type inference, and ranking all run in the page.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <span>Only preferences are stored, in <code class="mono">chrome.storage.local</code>. Sync is opt-in.</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <span>No account, API key, analytics, remote model, or third-party server is used.</span>
+              </li>
+            </ul>
+
+            <label class="row">
+              <span class="row-copy">
+                <span class="row-title">Debug logging</span>
+                <span class="row-description">Print diagnostic messages to the page console. Logs stay in memory.</span>
+              </span>
+              <span class="switch">
+                <span class="sr-only">Enable debug logging</span>
+                <input type="checkbox" data-setting="debug" />
+                <span class="switch-track" aria-hidden="true"></span>
+              </span>
+            </label>
+
+            <div class="danger-zone">
+              <div>
+                <p><strong>Reset all preferences</strong></p>
+                <p>Restores defaults, clears the optional sync copy, and keeps the extension installed.</p>
+              </div>
+              <button id="resetSettings" class="btn btn-danger" type="button">Reset</button>
+            </div>
+          </section>
+
+          <footer class="footer">
+            <span>Leetcomete runs entirely on your device.</span>
+            <span id="footerVersion">v1.0.0</span>
+          </footer>
+        </main>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite">
+      <span class="toast-dot" aria-hidden="true"></span>
+      <span id="toastText">Settings saved</span>
+    </div>
+
+    <script type="module" src="./options.ts"></script>
+  </body>
+</html>

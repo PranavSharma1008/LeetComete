@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Leetcomete</title>
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header class="popup-header">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"></div>
+          <div class="brand-copy">
+            <h1 class="brand-title">Leetcomete</h1>
+            <p class="brand-subtitle">Local code completion</p>
+          </div>
+        </div>
+        <label class="switch" title="Enable or pause Leetcomete">
+          <span class="sr-only">Enable Leetcomete</span>
+          <input id="enabled" type="checkbox" />
+          <span class="switch-track" aria-hidden="true"></span>
+        </label>
+      </header>
+
+      <section id="statusCard" class="status-card" data-state="off" aria-live="polite">
+        <div class="status-head">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span id="statusTitle" class="status-title">Checking this page…</span>
+          <span id="statusBadge" class="pill status-badge">…</span>
+        </div>
+        <p id="statusReason" class="status-reason">Looking for a supported code editor.</p>
+        <dl class="status-grid">
+          <div>
+            <dt>Site</dt>
+            <dd id="statusPlatform">—</dd>
+          </div>
+          <div>
+            <dt>Editor</dt>
+            <dd id="statusEditor">—</dd>
+          </div>
+          <div>
+            <dt>Language</dt>
+            <dd id="statusLanguage">—</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="quick" aria-labelledby="quickTitle">
+        <h2 id="quickTitle" class="quick-title">
+          <span>Quick settings</span>
+          <span id="indexTime" class="mono">—</span>
+        </h2>
+        <label class="row">
+          <span class="row-copy">
+            <span class="row-title">Keywords</span>
+            <span class="row-description">if, for, return, class…</span>
+          </span>
+          <span class="switch">
+            <span class="sr-only">Show keyword suggestions</span>
+            <input id="showKeywords" type="checkbox" />
+            <span class="switch-track" aria-hidden="true"></span>
+          </span>
+        </label>
+        <label class="row">
+          <span class="row-copy">
+            <span class="row-title">Built-ins</span>
+            <span class="row-description">Language types and globals</span>
+          </span>
+          <span class="switch">
+            <span class="sr-only">Show built-in suggestions</span>
+            <input id="showBuiltins" type="checkbox" />
+            <span class="switch-track" aria-hidden="true"></span>
+          </span>
+        </label>
+        <label class="row">
+          <span class="row-copy">
+            <span class="row-title">Member suggestions</span>
+            <span class="row-description">After <code class="mono">.</code>, <code class="mono">-&gt;</code> or <code class="mono">::</code></span>
+          </span>
+          <span class="switch">
+            <span class="sr-only">Show member suggestions</span>
+            <input id="showMemberSuggestions" type="checkbox" />
+            <span class="switch-track" aria-hidden="true"></span>
+          </span>
+        </label>
+      </section>
+
+      <footer class="popup-footer">
+        <button id="openOptions" class="btn btn-primary" type="button">Open settings</button>
+        <p class="privacy-note">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3 5 6v5c0 4.5 2.9 8.2 7 10 4.1-1.8 7-5.5 7-10V6l-7-3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+            <path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span>Runs locally. No code, keystrokes, or telemetry leave your browser.</span>
+        </p>
+        <p id="version" class="version">Leetcomete</p>
+      </footer>
+    </main>
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>

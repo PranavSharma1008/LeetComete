@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Leetcomete is a local-first Chrome extension that adds VS Code-style autocomplete to code editors on LeetCode, GeeksforGeeks, HackerRank, Codeforces, CodeChef, AtCoder, and Exercism."
+    />
+    <title>Leetcomete — local-first code completion for the browser</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Leetcomete</span>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <a href="#features">Features</a>
+          <a href="#platforms">Platforms</a>
+          <a href="#privacy">Privacy</a>
+          <a href="./privacy.html">Privacy policy</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="hero" aria-labelledby="hero-title">
+        <div>
+          <p class="eyebrow">Chrome Manifest V3 · local-first</p>
+          <h1 id="hero-title">Autocomplete that stays on your machine.</h1>
+          <p class="lede">
+            Leetcomete adds VS Code-style suggestions to browser code editors on competitive-programming
+            and practice sites. It indexes the code in the page, ranks symbols by context, and never sends
+            your source anywhere.
+          </p>
+          <div class="actions">
+            <!-- After the Chrome Web Store listing is live, replace this button with:
+                 <a class="button" href="https://chrome.google.com/webstore/detail/YOUR_EXTENSION_ID">Install from Chrome Web Store</a> -->
+            <a class="button" href="#features">See what it does</a>
+            <a class="button secondary" href="./privacy.html">Read the privacy policy</a>
+          </div>
+          <div class="tags" aria-label="Supported languages">
+            <span class="tag">Java</span>
+            <span class="tag">C</span>
+            <span class="tag">C++</span>
+            <span class="tag">Python</span>
+            <span class="tag">JavaScript</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">C#</span>
+            <span class="tag">Go</span>
+            <span class="tag">Rust</span>
+            <span class="tag">Kotlin</span>
+            <span class="tag">Swift</span>
+            <span class="tag">Ruby</span>
+            <span class="tag">PHP</span>
+            <span class="tag">Scala</span>
+            <span class="tag">SQL</span>
+          </div>
+        </div>
+
+        <div class="hero-card" aria-label="Example completion popup">
+          <pre><code>class Solution {
+  int result = 1;
+
+  void solve() {
+    int res<span class="caret">|</span>
+  }
+}</code></pre>
+          <div class="popup-demo" aria-hidden="true">
+            <div class="row active">
+              <span class="badge">V</span>
+              <span>result</span>
+              <span class="detail">local · int</span>
+            </div>
+            <div class="row">
+              <span class="badge">V</span>
+              <span>response</span>
+              <span class="detail">local · int</span>
+            </div>
+            <div class="row">
+              <span class="badge">K</span>
+              <span>return</span>
+              <span class="detail">keyword</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" aria-labelledby="features-title">
+        <h2 id="features-title">Built for the editor you already use</h2>
+        <p class="section-lede">
+          No account, no API key, no remote model. The extension understands the code in the current
+          editor and gets out of the way when you do not need it.
+        </p>
+        <div class="grid">
+          <article class="card">
+            <h3>15 languages</h3>
+            <p>
+              Java, C, C++, Python, JavaScript, TypeScript, C#, Go, Rust, Kotlin, Swift, Ruby, PHP,
+              Scala, and SQL, each with its own keywords, built-ins, declarations, and member hints.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Editor-aware</h3>
+            <p>
+              Monaco uses its native completion provider, so undo, snippets, and shortcuts keep working.
+              CodeMirror 5 and plain textareas use a caret-anchored shadow-DOM popup.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Context, not noise</h3>
+            <p>
+              Locals and parameters rank above distant declarations; keywords and built-ins are optional.
+              Typing inside comments and strings does not open the popup.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Keyboard-first</h3>
+            <p>
+              <kbd>Tab</kbd> or <kbd>Enter</kbd> accepts, arrows navigate, <kbd>Escape</kbd> dismisses,
+              and <kbd>Ctrl</kbd>+<kbd>Space</kbd> or <kbd>Alt</kbd>+<kbd>/</kbd> triggers explicitly.
+            </p>
+          </article>
+          <article class="card">
+            <h3>No duplicate characters</h3>
+            <p>
+              Acceptance replaces exactly the typed prefix and restores the caret. Snippets place the
+              cursor at the intended position instead of appending text twice.
+            </p>
+          </article>
+          <article class="card">
+            <h3>Local by design</h3>
+            <p>
+              Settings live in <code>chrome.storage.local</code>. Chrome Sync is an explicit opt-in mirror
+              for preferences only. Source text is never stored or transmitted.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="platforms" aria-labelledby="platforms-title">
+        <h2 id="platforms-title">Supported platforms</h2>
+        <p class="section-lede">
+          Site layouts change. Leetcomete uses narrow selectors and reports the detected platform, editor,
+          and language in the popup so a selector failure is visible instead of silent.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Platform</th>
+                <th scope="col">Editor path</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>LeetCode (.com / .cn)</td>
+                <td>Monaco native provider, CodeMirror 5, textarea</td>
+                <td>Priority target; live selectors need manual verification.</td>
+              </tr>
+              <tr>
+                <td>GeeksforGeeks</td>
+                <td>CodeMirror 5, textarea</td>
+                <td>Best-effort selectors.</td>
+              </tr>
+              <tr>
+                <td>HackerRank</td>
+                <td>CodeMirror 5, textarea</td>
+                <td>Best-effort selectors.</td>
+              </tr>
+              <tr>
+                <td>Codeforces</td>
+                <td>CodeMirror 5, textarea</td>
+                <td>Best-effort selectors.</td>
+              </tr>
+              <tr>
+                <td>CodeChef</td>
+                <td>CodeMirror 5, textarea</td>
+                <td>Best-effort selectors.</td>
+              </tr>
+              <tr>
+                <td>AtCoder</td>
+                <td>CodeMirror 5, textarea</td>
+                <td>Best-effort selectors.</td>
+              </tr>
+              <tr>
+                <td>Exercism</td>
+                <td>CodeMirror 6 detection only</td>
+                <td>Not supported; reported honestly in the popup.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="notice">
+          Verification status: the completion engine, editor adapters, settings, build, and packaging are
+          covered by automated tests. A synthetic LeetCode page was exercised in a Chromium browser
+          harness. Live third-party sites, Monaco on the real LeetCode domain, and CodeMirror 5 pages
+          still require manual testing. See the repository's <code>docs/VERIFICATION.md</code> and
+          <code>docs/MANUAL_TESTING.md</code> for the exact results and remaining checklist.
+        </p>
+      </section>
+
+      <section id="privacy" aria-labelledby="privacy-title">
+        <h2 id="privacy-title">Privacy without an asterisk</h2>
+        <p class="section-lede">
+          The extension requests only the <code>storage</code> permission. Site access is limited to the
+          seven supported platforms through content-script match patterns. There is no analytics SDK,
+          telemetry, advertising, remote model, or remote code.
+        </p>
+        <div class="grid">
+          <article class="card">
+            <h3>What is processed</h3>
+            <p>
+              Editor text is read in the current tab to build an in-memory index and produce suggestions.
+              It is discarded when the tab closes or the index is evicted.
+            </p>
+          </article>
+          <article class="card">
+            <h3>What is stored</h3>
+            <p>
+              Only the preferences object in <code>chrome.storage.local</code>. If you enable sync, that
+              same preferences object is mirrored to <code>chrome.storage.sync</code>.
+            </p>
+          </article>
+          <article class="card">
+            <h3>What is shared</h3>
+            <p>
+              Nothing. No data is sold, rented, or shared with third parties. The extension makes no
+              network requests of its own.
+            </p>
+          </article>
+        </div>
+        <p class="notice">
+          Read the full <a href="./privacy.html">Leetcomete privacy policy</a> for retention, permissions,
+          Chrome Sync, and contact details.
+        </p>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span>Leetcomete · local-first code completion</span>
+        <span>
+          <a href="./privacy.html">Privacy policy</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>

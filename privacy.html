@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Privacy policy for the Leetcomete Chrome extension: local-only code analysis, preferences-only storage, and no data sharing."
+    />
+    <title>Privacy policy — Leetcomete</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="./index.html">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>Leetcomete</span>
+        </a>
+        <nav class="site-nav" aria-label="Main">
+          <a href="./index.html">Home</a>
+          <a href="./privacy.html" aria-current="page">Privacy policy</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <article class="policy">
+        <h1>Privacy policy</h1>
+        <p class="meta">Effective date: October 30, 2026 · Last updated: October 30, 2026</p>
+
+        <div class="summary">
+          <p>
+            <strong>Short version:</strong> Leetcomete does not collect, transmit, sell, or share your
+            data. It reads the code in the current editor to produce suggestions locally in your browser.
+            Only your preferences are stored, locally by default.
+          </p>
+        </div>
+
+        <h2>1. Scope</h2>
+        <p>
+          This policy applies to the Leetcomete browser extension for Chromium-based browsers (Chrome,
+          Edge, Brave, and compatible browsers) and to this static website. The extension is published
+          under the name <strong>Leetcomete</strong>.
+        </p>
+
+        <h2>2. What the extension does</h2>
+        <p>
+          Leetcomete adds code-completion suggestions to supported code editors on LeetCode,
+          GeeksforGeeks, HackerRank, Codeforces, CodeChef, AtCoder, and Exercism. To do that, it reads
+          the text of the active code editor and builds a short-lived index of identifiers in the page.
+          The index and the source text stay inside the browser tab. They are not saved to disk by the
+          extension and are not sent to a server.
+        </p>
+
+        <h2>3. Data collection and transmission</h2>
+        <p>
+          <strong>Leetcomete does not collect personal data and does not transmit source code.</strong>
+          The extension contains no analytics, telemetry, advertising, crash-reporting SDK, remote model,
+          or remote code loader. It makes no network requests of its own.
+        </p>
+        <p>The extension does not access:</p>
+        <ul>
+          <li>your browsing history, bookmarks, downloads, or open tabs outside the supported sites;</li>
+          <li>your Google account, email, contacts, or payment information;</li>
+          <li>files on your device outside the page content of a supported site;</li>
+          <li>keystrokes or clipboard contents outside a supported code editor.</li>
+        </ul>
+
+        <h2>4. Storage</h2>
+        <h3>Local preferences</h3>
+        <p>
+          The extension stores one preferences object in <code>chrome.storage.local</code>. It contains
+          settings such as the master switch, per-platform and per-language toggles, popup behavior,
+          theme, and debug-logging preference. It does not contain source code, identifiers, URLs, or
+          page text.
+        </p>
+        <h3>Optional Chrome Sync</h3>
+        <p>
+          If you explicitly enable <strong>Sync settings</strong>, the same preferences object is mirrored
+          to <code>chrome.storage.sync</code>. Chrome Sync is operated by Google and is subject to
+          Google's terms and privacy policy. Leetcomete does not operate the sync service and does not
+          receive the synced data. Disabling sync removes the extension's synced copy while keeping the
+          local copy.
+        </p>
+        <h3>Session status</h3>
+        <p>
+          The extension may keep short-lived status information in <code>chrome.storage.session</code>
+          so the toolbar popup can show the detected platform, editor, language, and extension state for
+          the current tab. This information is cleared when the tab closes or navigates and is not
+          persisted across browser sessions.
+        </p>
+
+        <h2>5. Permissions and site access</h2>
+        <p>
+          The extension requests only the <code>storage</code> permission. It does not request
+          <code>tabs</code>, <code>history</code>, <code>bookmarks</code>, <code>cookies</code>,
+          <code>webRequest</code>, or <code>&lt;all_urls&gt;</code>.
+        </p>
+        <p>
+          Content scripts run only on the following domains, as declared in the extension manifest:
+        </p>
+        <ul>
+          <li><code>leetcode.com</code>, <code>www.leetcode.com</code>, <code>leetcode.cn</code>, <code>www.leetcode.cn</code></li>
+          <li><code>geeksforgeeks.org</code>, <code>www.geeksforgeeks.org</code>, <code>practice.geeksforgeeks.org</code></li>
+          <li><code>hackerrank.com</code>, <code>www.hackerrank.com</code></li>
+          <li><code>codeforces.com</code>, <code>www.codeforces.com</code>, <code>m1.codeforces.com</code>, <code>m2.codeforces.com</code></li>
+          <li><code>codechef.com</code>, <code>www.codechef.com</code></li>
+          <li><code>atcoder.jp</code></li>
+          <li><code>exercism.org</code>, <code>www.exercism.org</code></li>
+        </ul>
+        <p>
+          On those domains, the extension reads editor content to provide completion and detects the
+          selected language. It does not read unrelated form fields, passwords, or messages.
+        </p>
+
+        <h2>6. Data sharing and sale</h2>
+        <p>
+          Leetcomete does not sell, rent, trade, or share data with third parties. There are no
+          advertising partners, data brokers, or analytics providers. Because no data is collected, there
+          is no data to disclose, transfer, or delete on a server.
+        </p>
+
+        <h2>7. Retention</h2>
+        <ul>
+          <li>
+            <strong>Source text and indexes:</strong> held in memory for the current page and discarded
+            when the index is evicted, the editor session ends, or the tab closes.
+          </li>
+          <li>
+            <strong>Local preferences:</strong> retained until you reset the extension, clear extension
+            storage, or uninstall the extension.
+          </li>
+          <li>
+            <strong>Synced preferences:</strong> retained in Chrome Sync until you disable sync, clear
+            the synced data, or uninstall the extension.
+          </li>
+          <li>
+            <strong>Session status:</strong> cleared on navigation, tab close, or browser restart.
+          </li>
+        </ul>
+
+        <h2>8. Security</h2>
+        <p>
+          The extension is packaged as a Manifest V3 extension. All executable code is included in the
+          package; it does not load remote scripts, use <code>eval</code>, or request broad host access.
+          The page bridge runs in the page's main world to access editor APIs, while the isolated content
+          script owns extension storage access. Source text does not cross that boundary.
+        </p>
+
+        <h2>9. Children</h2>
+        <p>
+          Leetcomete is a developer and study tool. It is not directed to children under 13 and does not
+          knowingly collect information from children.
+        </p>
+
+        <h2>10. Changes to this policy</h2>
+        <p>
+          If the extension's data practices change, this page will be updated and the change will be
+          reflected in a new extension version and Chrome Web Store listing. The effective date at the
+          top of this page identifies the current version.
+        </p>
+
+        <h2>11. Contact</h2>
+        <p>
+          For privacy questions, use the support contact published on the Leetcomete Chrome Web Store
+          listing.
+        </p>
+        <!-- Optional: add a monitored address before publishing, for example:
+             <p>Email: <a href="mailto:you@example.com">you@example.com</a></p> -->
+
+
+        <h2>12. Chrome Web Store disclosure</h2>
+        <p>
+          Leetcomete's use of information is limited to providing its single purpose: local code
+          completion on supported code-editor pages. The extension does not use or transfer user data for
+          purposes unrelated to that single purpose, and it does not use or transfer user data to
+          determine creditworthiness or for lending purposes.
+        </p>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span>Leetcomete · local-first code completion</span>
+        <span><a href="./index.html">Back to home</a></span>
+      </div>
+    </footer>
+  </body>
+</html>

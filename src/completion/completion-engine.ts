@@ -9,7 +9,7 @@ import type {
 } from "../shared/types";
 import type { LanguageDefinition } from "../languages/language-config";
 import { getMembersForType } from "../languages/language-registry";
-import { buildCompletionContext } from "./completion-context";
+import { buildCompletionContext, WORD_CHAR } from "./completion-context";
 import {
   IdentifierIndexCache,
   indexStats,
@@ -58,6 +58,16 @@ export class CompletionEngine {
       return this.empty(context, index, stats, suggestStarted, "Prefix is too short.");
     }
 
+    const isInsideWord =
+      !request.explicit &&
+      !context.memberAccess &&
+      context.prefix.length > 0 &&
+      request.offset < request.text.length &&
+      WORD_CHAR.test(request.text[request.offset] ?? "");
+    if (isInsideWord) {
+      return this.empty(context, index, stats, suggestStarted, "Caret is inside an existing word.");
+    }
+
     const candidates = this.collectCandidates(request, index, context);
     const items = rankSuggestions(candidates, {
       prefix: context.prefix,
@@ -67,6 +77,14 @@ export class CompletionEngine {
       scopeDistance: (scopeId) =>
         scopeDistance(index, scopeId, index.scopes.scopeAt(request.offset).id),
     });
+
+    const onlyExactMatches =
+      !request.explicit &&
+      items.length > 0 &&
+      items.every((item) => item.label.toLowerCase() === context.prefix.toLowerCase());
+    if (onlyExactMatches) {
+      return this.empty(context, index, stats, suggestStarted, "Prefix already matches all candidates.");
+    }
 
     return {
       items,
@@ -144,6 +162,11 @@ export class CompletionEngine {
         continue;
       }
 
+      const normalizedName = definition.caseSensitive
+        ? declaration.name
+        : declaration.name.toLowerCase();
+      const frequency = index.identifiers.get(normalizedName) ?? 1;
+
       candidates.push({
         item: {
           label: declaration.name,
@@ -156,6 +179,7 @@ export class CompletionEngine {
         },
         baseScore: 45,
         scopeId: declaration.scopeId,
+        frequency,
       });
     }
 

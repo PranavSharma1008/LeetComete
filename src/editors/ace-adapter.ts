@@ -170,4 +170,8 @@ export class AceAdapter implements EditorAdapter {
   focus(): void {
     this.editor.focus();
   }
+
+  getDomNode(): HTMLElement | null {
+    return this.editor.container ?? null;
+  }
 }

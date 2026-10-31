@@ -83,11 +83,29 @@ const KIND_MAP: Record<CompletionItem["kind"], string> = {
 
 const MONACO_TRIGGER_CHARACTERS = [".", ">", ":", "(", "[", "$"];
 
+export function hideMonacoNativeSuggestWidget(): void {
+  if (typeof document === "undefined") return;
+  if (document.getElementById("leetcomete-hide-monaco-suggest")) return;
+  const style = document.createElement("style");
+  style.id = "leetcomete-hide-monaco-suggest";
+  style.textContent = `
+    .monaco-editor .suggest-widget,
+    .monaco-editor .suggest-details-container {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+  `;
+  (document.head || document.documentElement).appendChild(style);
+}
+
 /**
- * Configure Monaco editor instances on the page to ensure quickSuggestions and
- * autocomplete triggers are active (LeetCode disables them by default for free users).
+ * Configure Monaco editor instances on the page to disable Monaco's native suggest
+ * widget so only Leetcomete's custom floating popup is shown.
  */
 export function configureMonacoEditors(): void {
+  hideMonacoNativeSuggestWidget();
   const api = getMonacoApi();
   if (!api?.editor?.getEditors) return;
   try {
@@ -96,14 +114,12 @@ export function configureMonacoEditors(): void {
       const ed = editor as MonacoEditorInstance & { _leetcometeConfigured?: boolean };
       if (!ed._leetcometeConfigured && typeof ed.updateOptions === "function") {
         ed.updateOptions({
-          quickSuggestions: {
-            other: true,
-            comments: false,
-            strings: false,
-          },
-          suggestOnTriggerCharacters: true,
-          acceptSuggestionOnEnter: "on",
-          tabCompletion: "on",
+          quickSuggestions: false,
+          suggestOnTriggerCharacters: false,
+          wordBasedSuggestions: "off",
+          snippetSuggestions: "none",
+          acceptSuggestionOnEnter: "off",
+          tabCompletion: "off",
         });
         ed._leetcometeConfigured = true;
       }
@@ -114,9 +130,9 @@ export function configureMonacoEditors(): void {
 }
 
 /**
- * Register a Monaco completion provider once per page. Monaco owns the popup,
- * keyboard handling and undo, so this integration is intentionally thin: we
- * only translate our engine result into Monaco's suggestion shape.
+ * Register Monaco hooks once per page. We do not register native Monaco completion
+ * item providers because Leetcomete drives suggestions exclusively via CompletionController
+ * and SuggestionPopup (which prevents duplicate/overlapping background popups).
  */
 export function registerMonaco(getSettings: () => Settings): boolean {
   const api = getMonacoApi();
@@ -124,76 +140,35 @@ export function registerMonaco(getSettings: () => Settings): boolean {
 
   const host = window as unknown as MonacoGlobal;
   if (host.__leetcometeMonaco) {
-    configureMonacoEditors();
-    return true;
-  }
-
-  const engine = new CompletionEngine();
-  const dynamicLanguages = api.languages.getLanguages?.()?.map((l) => l.id) ?? [];
-  const languages = new Set<string>([
-    "plaintext",
-    ...Object.keys(MONACO_LANGUAGE_ALIASES),
-    ...Object.values(MONACO_LANGUAGE_ALIASES),
-    ...dynamicLanguages,
-  ]);
-
-  const state: NonNullable<MonacoGlobal["__leetcometeMonaco"]> = {
-    engine,
-    getSettings,
-    disposables: [],
-    languages: [...languages],
-  };
-  host.__leetcometeMonaco = state;
-
-  for (const languageId of languages) {
-    try {
-      const disposable = api.languages.registerCompletionItemProvider(languageId, {
-        triggerCharacters: MONACO_TRIGGER_CHARACTERS,
-        provideCompletionItems(model, position) {
-          return {
-            suggestions: provideSuggestions(api, engine, getSettings, model, position),
-          };
-        },
-      });
-      state.disposables.push(disposable);
-    } catch (error) {
-      console.warn(`[Leetcomete] Could not register Monaco provider for ${languageId}.`, error);
+    for (const d of host.__leetcometeMonaco.disposables) {
+      try {
+        d.dispose();
+      } catch {
+        // ignore
+      }
     }
+    host.__leetcometeMonaco.disposables = [];
+  } else {
+    host.__leetcometeMonaco = {
+      engine: new CompletionEngine(),
+      getSettings,
+      disposables: [],
+      languages: [],
+    };
   }
 
   configureMonacoEditors();
 
-  if (typeof api.editor.onDidCreateEditor === "function") {
+  if (typeof api.editor?.onDidCreateEditor === "function") {
     try {
       const disposable = api.editor.onDidCreateEditor(() => {
         configureMonacoEditors();
       });
-      state.disposables.push(disposable);
+      host.__leetcometeMonaco.disposables.push(disposable);
     } catch {
       // best-effort
     }
   }
-
-  // Explicit hotkey trigger (Ctrl+Space and Alt+/) on Monaco editor focus
-  const handleKeydown = (event: KeyboardEvent): void => {
-    if (
-      (event.code === "Space" && event.ctrlKey && !event.altKey && !event.metaKey && !event.shiftKey) ||
-      (event.key === "/" && event.altKey && !event.ctrlKey && !event.metaKey)
-    ) {
-      const editors = api.editor.getEditors?.() ?? [];
-      for (const ed of editors) {
-        if ((ed.hasWidgetFocus?.() || ed.hasTextFocus?.()) && typeof ed.trigger === "function") {
-          event.preventDefault();
-          ed.trigger("keyboard", "editor.action.triggerSuggest", {});
-          break;
-        }
-      }
-    }
-  };
-  window.addEventListener("keydown", handleKeydown, true);
-  state.disposables.push({
-    dispose: () => window.removeEventListener("keydown", handleKeydown, true),
-  });
 
   return true;
 }

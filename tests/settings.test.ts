@@ -54,6 +54,10 @@ describe("settings defaults", () => {
     expect(settings.acceptOnTab).toBe(true);
     expect(settings.acceptOnEnter).toBe(true);
     expect(settings.syncEnabled).toBe(false);
+    expect(settings.minPrefixLength).toBe(1);
+    expect(settings.maxSuggestions).toBe(50);
+    expect(settings.debounceMs).toBe(10);
+    expect(settings.fuzzyMatching).toBe(false);
   });
 
   it("clamps out-of-range values and preserves unknown defaults", () => {

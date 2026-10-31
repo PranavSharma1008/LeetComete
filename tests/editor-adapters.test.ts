@@ -12,6 +12,7 @@ import {
   type MonacoEditorInstance,
   type MonacoModel,
 } from "../src/editors/monaco-adapter";
+import { configureMonacoEditors } from "../src/editors/monaco-integration";
 import {
   AceAdapter,
   type AceEditorInstance,
@@ -177,6 +178,29 @@ describe("MonacoAdapter", () => {
     expect(editsApplied[0]?.text).toBe("result");
     expect(pos).toEqual({ lineNumber: 2, column: 7 });
   });
+
+  it("disables Monaco native quickSuggestions and injects hiding stylesheet", () => {
+    let optionsApplied: Record<string, unknown> = {};
+    const mockEditor = {
+      updateOptions: (opts: Record<string, unknown>) => {
+        optionsApplied = opts;
+      },
+    };
+    (window as unknown as { monaco?: unknown }).monaco = {
+      Range: class {},
+      languages: {
+        registerCompletionItemProvider: () => ({ dispose: () => undefined }),
+      },
+      editor: {
+        getEditors: () => [mockEditor],
+      },
+    };
+
+    configureMonacoEditors();
+    expect(optionsApplied.quickSuggestions).toBe(false);
+    expect(optionsApplied.suggestOnTriggerCharacters).toBe(false);
+    expect(document.getElementById("leetcomete-hide-monaco-suggest")).not.toBeNull();
+  });
 });
 
 describe("AceAdapter", () => {
@@ -328,6 +352,71 @@ describe("CompletionController", () => {
       expect(controller.diagnostics.result?.items[0]?.label).toBe(first);
       keydown(element, "Escape");
       expect(controller.diagnostics.visible).toBe(false);
+    } finally {
+      controller.dispose();
+    }
+  });
+
+  it("does not open suggestions on pure cursor navigation or clicking", async () => {
+    const element = textarea("return hs.contains(value);");
+    element.setSelectionRange(4, 4); // at "retu|rn"
+    const adapter = new TextareaAdapter(element, () => "Java");
+    const controller = new CompletionController(
+      adapter,
+      new CompletionEngine(),
+      defaultSettings,
+    );
+
+    try {
+      controller.start();
+      document.dispatchEvent(new Event("selectionchange"));
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      expect(controller.diagnostics.visible).toBe(false);
+    } finally {
+      controller.dispose();
+    }
+  });
+
+  it("allows mouse movement and interaction with open suggestions without dismissing", async () => {
+    const element = textarea("int result = 0;\nre");
+    const adapter = new TextareaAdapter(element, () => "Java");
+    const controller = new CompletionController(
+      adapter,
+      new CompletionEngine(),
+      defaultSettings,
+    );
+
+    try {
+      controller.start();
+      controller.refresh(true);
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      expect(controller.diagnostics.visible).toBe(true);
+
+      // Moving mouse across editor surface does not dismiss suggestions
+      element.dispatchEvent(new MouseEvent("mousemove", { bubbles: true }));
+      expect(controller.diagnostics.visible).toBe(true);
+    } finally {
+      controller.dispose();
+    }
+  });
+
+  it("opens suggestions when text is typed", async () => {
+    const element = textarea("int result = 0;\n");
+    const adapter = new TextareaAdapter(element, () => "Java");
+    const controller = new CompletionController(
+      adapter,
+      new CompletionEngine(),
+      defaultSettings,
+    );
+
+    try {
+      controller.start();
+      element.value = "int result = 0;\nre";
+      element.setSelectionRange(element.value.length, element.value.length);
+      element.dispatchEvent(new Event("input"));
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      expect(controller.diagnostics.visible).toBe(true);
+      expect(controller.diagnostics.result?.items[0]?.label).toBe("result");
     } finally {
       controller.dispose();
     }

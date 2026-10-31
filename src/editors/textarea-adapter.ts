@@ -94,6 +94,10 @@ export class TextareaAdapter implements EditorAdapter {
   focus(): void {
     this.textarea.focus();
   }
+
+  getDomNode(): HTMLElement | null {
+    return this.textarea;
+  }
 }
 
 const MIRROR_PROPERTIES = [

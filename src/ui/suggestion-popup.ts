@@ -74,7 +74,8 @@ const STYLE = `
   user-select: none;
   box-sizing: border-box;
 }
-.item[aria-selected="true"] {
+.item[aria-selected="true"],
+.item:hover {
   background: var(--lc-accent-soft);
 }
 .badge {
@@ -90,6 +91,7 @@ const STYLE = `
   align-items: center;
   justify-content: center;
 }
+.item:hover .badge,
 .item[aria-selected="true"] .badge {
   background: var(--lc-accent);
   color: #fff;
@@ -269,6 +271,10 @@ export class SuggestionPopup {
       detail.textContent = item.detail ?? "";
 
       row.append(badge, label, detail);
+      row.addEventListener("mouseenter", () => {
+        this.selected = index;
+        this.updateSelection();
+      });
       row.addEventListener("mousedown", (event) => {
         event.preventDefault();
         event.stopPropagation();

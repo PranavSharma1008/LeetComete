@@ -23,6 +23,7 @@ export interface EditorAdapter {
   onDidChange(listener: (source: ChangeSource) => void): () => void;
   onKeyDown(listener: (event: KeyboardEvent) => void): () => void;
   focus(): void;
+  getDomNode?(): HTMLElement | null;
 }
 
 export interface TextEdit {

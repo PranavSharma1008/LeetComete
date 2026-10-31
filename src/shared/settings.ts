@@ -10,22 +10,34 @@ function booleanRecord<T extends string>(keys: readonly T[], value: boolean): Re
   return Object.fromEntries(keys.map((key) => [key, value])) as Record<T, boolean>;
 }
 
+export const VS_CODE_PRESET: Pick<
+  Settings,
+  "minPrefixLength" | "maxSuggestions" | "debounceMs" | "acceptOnTab" | "acceptOnEnter" | "fuzzyMatching"
+> = {
+  minPrefixLength: 1,
+  maxSuggestions: 50,
+  debounceMs: 10,
+  acceptOnTab: true,
+  acceptOnEnter: true,
+  fuzzyMatching: false,
+};
+
 export function defaultSettings(): Settings {
   return {
     enabled: true,
     syncEnabled: false,
     platforms: booleanRecord<SupportedPlatformId>(SUPPORTED_PLATFORM_IDS, true),
     languages: booleanRecord<SupportedLanguageId>(SUPPORTED_LANGUAGE_IDS, true),
-    minPrefixLength: 1,
-    maxSuggestions: 40,
-    acceptOnTab: true,
-    acceptOnEnter: true,
-    fuzzyMatching: true,
+    minPrefixLength: VS_CODE_PRESET.minPrefixLength,
+    maxSuggestions: VS_CODE_PRESET.maxSuggestions,
+    acceptOnTab: VS_CODE_PRESET.acceptOnTab,
+    acceptOnEnter: VS_CODE_PRESET.acceptOnEnter,
+    fuzzyMatching: VS_CODE_PRESET.fuzzyMatching,
     showKeywords: true,
     showBuiltins: true,
     showSnippets: true,
     showMemberSuggestions: true,
-    debounceMs: 70,
+    debounceMs: VS_CODE_PRESET.debounceMs,
     theme: "auto",
     debug: false,
   };

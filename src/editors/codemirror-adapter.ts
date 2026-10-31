@@ -102,6 +102,12 @@ export class CodeMirror5Adapter implements EditorAdapter {
   focus(): void {
     this.cm.focus();
   }
+
+  getDomNode(): HTMLElement | null {
+    return typeof this.cm.getWrapperElement === "function"
+      ? this.cm.getWrapperElement()
+      : null;
+  }
 }
 
 /** Locate a CodeMirror 5 instance from its wrapper element. */

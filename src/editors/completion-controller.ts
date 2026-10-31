@@ -20,6 +20,8 @@ export class CompletionController {
   private suppressSelectionTimer: ReturnType<typeof setTimeout> | undefined;
   private suppressText = false;
   private suppressSelection = false;
+  private justEditedText = false;
+  private justEditedTextTimer: ReturnType<typeof setTimeout> | undefined;
   private lastResult: CompletionResult | null = null;
   /** Caret offset the last result was computed for. */
   private lastOffset = -1;
@@ -38,12 +40,38 @@ export class CompletionController {
   start(): void {
     this.disposers.push(
       this.adapter.onDidChange((source) => {
-        // Accepting a suggestion edits the document and moves the caret. Those
-        // programmatic events must not immediately reopen the popup for the
-        // word that was just inserted, while the next real keystroke must.
-        if (source === "text" && this.suppressText) return;
-        if (source === "selection" && this.suppressSelection) return;
-        this.schedule(false);
+        if (source === "text") {
+          // Accepting a suggestion edits the document and moves the caret. Programmatic
+          // events must not immediately reopen the popup for the word that was just inserted.
+          if (this.suppressText) return;
+          this.justEditedText = true;
+          if (this.justEditedTextTimer !== undefined) clearTimeout(this.justEditedTextTimer);
+          this.justEditedTextTimer = setTimeout(() => {
+            this.justEditedText = false;
+            this.justEditedTextTimer = undefined;
+          }, 50);
+          this.schedule(false);
+        } else if (source === "selection") {
+          if (this.suppressSelection) return;
+          if (this.justEditedText) {
+            this.justEditedText = false;
+            if (this.justEditedTextTimer !== undefined) {
+              clearTimeout(this.justEditedTextTimer);
+              this.justEditedTextTimer = undefined;
+            }
+            return;
+          }
+          // Pure cursor navigation or clicking without text edits:
+          // Never automatically pop up suggestions on hover / click / cursor movement.
+          // If the popup is open, navigating away or clicking hides it.
+          if (this.popup.isVisible) {
+            this.popup.hide();
+          }
+          if (this.timer !== undefined) {
+            clearTimeout(this.timer);
+            this.timer = undefined;
+          }
+        }
       }),
     );
     this.disposers.push(this.adapter.onKeyDown((event) => this.handleKeyDown(event)));
@@ -55,6 +83,7 @@ export class CompletionController {
     if (this.timer !== undefined) clearTimeout(this.timer);
     if (this.suppressTextTimer !== undefined) clearTimeout(this.suppressTextTimer);
     if (this.suppressSelectionTimer !== undefined) clearTimeout(this.suppressSelectionTimer);
+    if (this.justEditedTextTimer !== undefined) clearTimeout(this.justEditedTextTimer);
     for (const dispose of this.disposers) dispose();
     this.popup.destroy();
   }

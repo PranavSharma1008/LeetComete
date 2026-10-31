@@ -7,6 +7,7 @@ import {
   loadSettings,
   resetSettings,
   saveSettings,
+  VS_CODE_PRESET,
   watchSettings,
 } from "../shared/settings";
 import type {
@@ -156,8 +157,36 @@ function updateRangeOutput(input: HTMLInputElement): void {
   output.textContent = RANGE_LABELS[input.id]?.(value) ?? String(value);
 }
 
+function isVsCodePreset(s: Settings): boolean {
+  return (
+    s.minPrefixLength === VS_CODE_PRESET.minPrefixLength &&
+    s.maxSuggestions === VS_CODE_PRESET.maxSuggestions &&
+    s.debounceMs === VS_CODE_PRESET.debounceMs &&
+    s.acceptOnTab === VS_CODE_PRESET.acceptOnTab &&
+    s.acceptOnEnter === VS_CODE_PRESET.acceptOnEnter &&
+    s.fuzzyMatching === VS_CODE_PRESET.fuzzyMatching
+  );
+}
+
+function updatePresetUI(): void {
+  const isVsCode = isVsCodePreset(settings);
+  const badge = document.getElementById("presetBadge");
+  if (badge) {
+    badge.textContent = isVsCode ? "VS Code" : "Custom";
+    if (isVsCode) {
+      badge.dataset.tone = "success";
+    } else {
+      delete badge.dataset.tone;
+    }
+  }
+  for (const radio of document.querySelectorAll<HTMLInputElement>("input[name='sensitivityPreset']")) {
+    radio.checked = radio.value === (isVsCode ? "vscode" : "custom");
+  }
+}
+
 function render(): void {
   applyTheme();
+  updatePresetUI();
 
   for (const input of document.querySelectorAll<HTMLInputElement>("input[data-setting]")) {
     const key = input.dataset.setting;
@@ -188,6 +217,21 @@ function render(): void {
 }
 
 function bindEvents(): void {
+  for (const radio of document.querySelectorAll<HTMLInputElement>("input[name='sensitivityPreset']")) {
+    radio.addEventListener("change", () => {
+      if (!radio.checked) return;
+      if (radio.value === "vscode") {
+        settings = {
+          ...settings,
+          ...VS_CODE_PRESET,
+        };
+        render();
+        queueSave(0);
+        showToast("VS Code preset applied");
+      }
+    });
+  }
+
   for (const input of document.querySelectorAll<HTMLInputElement>("input[data-setting]")) {
     const key = input.dataset.setting;
     if (!key) continue;
@@ -196,11 +240,13 @@ function bindEvents(): void {
         updateRangeOutput(input);
         dirty = true;
         settings = { ...settings, [key]: Number(input.value) } as Settings;
+        updatePresetUI();
       });
       input.addEventListener("change", () => queueSave(0));
     } else {
       input.addEventListener("change", () => {
         patchSetting(key, input.checked);
+        updatePresetUI();
       });
     }
   }

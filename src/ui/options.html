@@ -108,6 +108,24 @@
 
             <div class="field">
               <div class="field-head">
+                <span class="field-label">Sensitivity preset</span>
+                <span id="presetBadge" class="pill">VS Code</span>
+              </div>
+              <div class="segmented" role="radiogroup" aria-label="Sensitivity preset">
+                <label>
+                  <input type="radio" name="sensitivityPreset" value="vscode" checked />
+                  <span>VS Code (Default)</span>
+                </label>
+                <label>
+                  <input type="radio" name="sensitivityPreset" value="custom" />
+                  <span>Custom</span>
+                </label>
+              </div>
+              <p class="field-description">VS Code defaults: 1-char prefix, 10 ms debounce, 12 suggestions. Select Custom to adjust sliders below.</p>
+            </div>
+
+            <div class="field">
+              <div class="field-head">
                 <label class="field-label" for="minPrefixLength">Minimum prefix length</label>
                 <output id="minPrefixLengthValue" class="field-value" for="minPrefixLength">1</output>
               </div>
@@ -119,7 +137,7 @@
             <div class="field">
               <div class="field-head">
                 <label class="field-label" for="maxSuggestions">Maximum suggestions</label>
-                <output id="maxSuggestionsValue" class="field-value" for="maxSuggestions">40</output>
+                <output id="maxSuggestionsValue" class="field-value" for="maxSuggestions">50</output>
               </div>
               <input id="maxSuggestions" class="range" type="range" min="5" max="100" step="5" data-setting="maxSuggestions" />
               <div class="range-scale"><span>5</span><span>100</span></div>
@@ -128,7 +146,7 @@
             <div class="field">
               <div class="field-head">
                 <label class="field-label" for="debounceMs">Typing debounce</label>
-                <output id="debounceMsValue" class="field-value" for="debounceMs">70 ms</output>
+                <output id="debounceMsValue" class="field-value" for="debounceMs">10 ms</output>
               </div>
               <input id="debounceMs" class="range" type="range" min="0" max="400" step="10" data-setting="debounceMs" />
               <div class="range-scale"><span>Instant</span><span>400 ms</span></div>

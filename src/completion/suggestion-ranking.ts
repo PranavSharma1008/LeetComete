@@ -20,28 +20,28 @@ export interface RankOptions {
 }
 
 const KIND_WEIGHT: Record<CompletionKind, number> = {
-  parameter: 34,
-  variable: 30,
-  field: 28,
-  property: 28,
-  function: 26,
-  method: 26,
-  constant: 22,
-  class: 20,
-  struct: 20,
-  interface: 20,
-  enum: 18,
-  type: 18,
-  builtin: 14,
-  keyword: 10,
-  snippet: 12,
+  parameter: 40,
+  variable: 36,
+  field: 32,
+  property: 32,
+  function: 30,
+  method: 30,
+  constant: 26,
+  class: 22,
+  struct: 22,
+  interface: 22,
+  enum: 20,
+  type: 20,
+  builtin: 12,
+  snippet: 8,
+  keyword: 6,
 };
 
 const SOURCE_WEIGHT: Record<CompletionItem["source"], number> = {
-  declaration: 26,
-  member: 22,
-  identifier: 12,
-  snippet: 8,
+  declaration: 40,
+  member: 32,
+  identifier: 24,
+  snippet: 6,
   language: 4,
 };
 
@@ -79,7 +79,7 @@ export function rankSuggestions(
               : distance === 3 ? 6
                 : 0;
     const frequencyBonus = candidate.frequency
-      ? Math.min(18, Math.log2(candidate.frequency + 1) * 4)
+      ? Math.min(30, Math.log2(candidate.frequency + 1) * 6)
       : 0;
 
     const total =
@@ -148,8 +148,8 @@ export function matchScore(
     return 820 + coverage * 80;
   }
 
-  // Word-boundary / camel-case match: `gv` -> `getValue`, `mli` -> `max_len`.
-  const boundary = boundaryScore(lowerLabel, lowerPrefix);
+  // Word-boundary / camel-case match: `gv` -> `getValue`, `mli` -> `max_len`, `sot` -> `sumOfTwo`.
+  const boundary = boundaryScore(label, lowerPrefix);
   if (boundary !== null) return boundary;
 
   if (!fuzzyMatching) return null;
@@ -159,6 +159,9 @@ export function matchScore(
 
 function boundaryScore(label: string, needle: string): number | null {
   if (needle.length < 2) return null;
+  const lowerNeedle = needle.toLowerCase();
+  // A camel-case abbreviation must match the start of the identifier (e.g. `sot` -> `sumOfTwo`, `gv` -> `getValue`).
+  if (label[0]?.toLowerCase() !== lowerNeedle[0]) return null;
 
   const positions: number[] = [];
   for (let i = 0; i < label.length; i++) {
@@ -170,33 +173,40 @@ function boundaryScore(label: string, needle: string): number | null {
       (/[a-z0-9]/.test(previous) && /[A-Z]/.test(char));
     if (isBoundary) positions.push(i);
   }
-  if (positions.length < needle.length) return null;
+  if (positions.length < lowerNeedle.length) return null;
 
   let cursor = 0;
   let matched = 0;
   let gaps = 0;
   for (const position of positions) {
-    const char = label[position] ?? "";
-    const target = needle[matched] ?? "";
+    const char = (label[position] ?? "").toLowerCase();
+    const target = lowerNeedle[matched] ?? "";
     if (char !== target) continue;
     if (matched > 0) gaps += position - cursor - 1;
     cursor = position;
     matched++;
-    if (matched === needle.length) break;
+    if (matched === lowerNeedle.length) break;
   }
-  if (matched !== needle.length) return null;
+  if (matched !== lowerNeedle.length) return null;
 
   return Math.max(520, 760 - gaps * 12);
 }
 
 function subsequenceScore(haystack: string, needle: string): number | null {
-  let index = 0;
-  let consecutive = 0;
-  let bestConsecutive = 0;
-  let gaps = 0;
-  let lastMatch = -2;
+  // Only allow fuzzy subsequence for needles with at least 3 characters.
+  // 1 or 2 character needles (like "te") must not match random words scattered across the dictionary.
+  if (needle.length < 3) return null;
 
-  for (let i = 0; i < haystack.length && index < needle.length; i++) {
+  // The needle must match the beginning of the label
+  if (haystack[0] !== needle[0]) return null;
+
+  let index = 1;
+  let consecutive = 1;
+  let bestConsecutive = 1;
+  let gaps = 0;
+  let lastMatch = 0;
+
+  for (let i = 1; i < haystack.length && index < needle.length; i++) {
     if (haystack[i] !== needle[index]) continue;
     if (i === lastMatch + 1) {
       consecutive++;
@@ -209,6 +219,8 @@ function subsequenceScore(haystack: string, needle: string): number | null {
     index++;
   }
   if (index !== needle.length) return null;
+
+  if (gaps > needle.length * 3) return null;
 
   const density = needle.length / Math.max(1, haystack.length);
   const consecutiveBonus = (bestConsecutive / needle.length) * 120;

@@ -4,7 +4,7 @@ import { normalizeTypeName } from "../languages/language-config";
 import type { IdentifierIndex } from "./identifier-index";
 import { isBlockedOffset, tokenAtOffset } from "./lexer";
 
-const WORD_CHAR = /[\p{L}\p{N}_$]/u;
+export const WORD_CHAR = /[\p{L}\p{N}_$]/u;
 
 /**
  * Work out what the caret is sitting on: the word being typed, whether it is a

@@ -33,6 +33,24 @@ describe("matchScore", () => {
   it("matches camel-case boundaries", () => {
     expect(matchScore("getValue", "gv", true, true)).not.toBeNull();
     expect(matchScore("max_len", "ml", true, true)).not.toBeNull();
+    expect(matchScore("sumOfTwo", "sot", true, true)).not.toBeNull();
+  });
+
+  it("does not match unrelated words or words that do not start with the prefix", () => {
+    // When typing "te", unrelated words containing 't' and 'e' must not match
+    expect(matchScore("byte", "te", true, true)).toBeNull();
+    expect(matchScore("System", "te", true, true)).toBeNull();
+    expect(matchScore("Integer", "te", true, true)).toBeNull();
+    expect(matchScore("Character", "te", true, true)).toBeNull();
+    expect(matchScore("extends", "te", true, true)).toBeNull();
+    expect(matchScore("private", "te", true, true)).toBeNull();
+    expect(matchScore("addTwoNumbers", "te", true, true)).toBeNull();
+    expect(matchScore("sumoftwo", "dog", true, true)).toBeNull();
+
+    // Actual matches starting with "te" must match
+    expect(matchScore("temp1", "te", true, false)).not.toBeNull();
+    expect(matchScore("temp2", "te", true, false)).not.toBeNull();
+    expect(matchScore("temp", "te", true, false)).not.toBeNull();
   });
 
   it("matches fuzzy subsequences only when enabled", () => {
@@ -121,5 +139,31 @@ describe("rankSuggestions", () => {
       },
     );
     expect(items[0]?.label).toBe("alpine");
+  });
+
+  it("prioritizes variables and identifiers used in code over keywords and snippets", () => {
+    const items = rankSuggestions(
+      [
+        candidate("tryc", "snippet", { baseScore: 0 }),
+        candidate("try", "keyword", { baseScore: 0 }),
+        candidate("this", "keyword", { baseScore: 0 }),
+        candidate("temp1", "variable", { baseScore: 45, frequency: 4, scopeId: 0 }),
+        candidate("temp2", "variable", { baseScore: 45, frequency: 3, scopeId: 0 }),
+        candidate("tmpdummy", "variable", { baseScore: 45, frequency: 2, scopeId: 0 }),
+      ],
+      {
+        prefix: "t",
+        caseSensitive: true,
+        fuzzyMatching: false,
+        maxResults: 10,
+        scopeDistance: () => 0,
+      },
+    );
+    const labels = items.map((i) => i.label);
+    expect(labels.indexOf("temp1")).toBeLessThan(labels.indexOf("tryc"));
+    expect(labels.indexOf("temp2")).toBeLessThan(labels.indexOf("tryc"));
+    expect(labels.indexOf("tmpdummy")).toBeLessThan(labels.indexOf("tryc"));
+    expect(labels.indexOf("temp1")).toBeLessThan(labels.indexOf("try"));
+    expect(labels.indexOf("temp1")).toBeLessThan(labels.indexOf("this"));
   });
 });

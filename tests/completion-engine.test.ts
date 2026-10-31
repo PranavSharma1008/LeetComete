@@ -250,4 +250,34 @@ const text = "val`;
     expect(result.items.length).toBeGreaterThan(0);
     expect(elapsed).toBeLessThan(3000);
   });
+
+  it("suppresses automatic suggestions when the caret is inside an existing word", () => {
+    const text = `class Solution {
+  void solve() {
+    return hs.contains(value);
+  }
+}`;
+    const offset = text.indexOf("retu") + 4; // caret at "retu|rn"
+    const engine = new CompletionEngine();
+    const result = engine.complete(request(text, offset, "java"));
+    expect(result.items).toHaveLength(0);
+    expect(result.context.reason).toBe("Caret is inside an existing word.");
+
+    // Explicit completion should still work if requested
+    const explicit = engine.complete(request(text, offset, "java", { explicit: true }));
+    expect(explicit.items.map((i) => i.label)).toContain("return");
+  });
+
+  it("suppresses automatic suggestions when the prefix already matches all candidates", () => {
+    const text = `class Solution {
+  void solve() {
+    return hs.contains(value);
+  }
+}`;
+    const offset = text.indexOf("return") + "return".length;
+    const engine = new CompletionEngine();
+    const result = engine.complete(request(text, offset, "java"));
+    expect(result.items).toHaveLength(0);
+    expect(result.context.reason).toBe("Prefix already matches all candidates.");
+  });
 });

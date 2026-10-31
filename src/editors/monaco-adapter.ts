@@ -225,4 +225,8 @@ export class MonacoAdapter implements EditorAdapter {
   focus(): void {
     this.editor.focus();
   }
+
+  getDomNode(): HTMLElement | null {
+    return this.editor.getDomNode?.() ?? null;
+  }
 }
